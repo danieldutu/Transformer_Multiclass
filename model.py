@@ -4,6 +4,22 @@ import torch
 
 
 class TransformerModel(nn.Module):
+    """Transformer model for text classification
+
+    Args:
+        output_dim (int): Number of classes
+        hidden_dim (int): Hidden dimension of the transformer
+        num_layers (int): Number of transformer layers
+        dropout (float): Dropout probability
+
+    Methods:
+        forward: Forward pass of the model
+
+    Return
+        output: Output of the model
+
+    """
+
     def __init__(self, output_dim, hidden_dim, num_layers, dropout):
         super().__init__()
 
@@ -14,20 +30,23 @@ class TransformerModel(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, inputs):
-        embedded = self.bert(inputs['input_ids'], attention_mask=inputs['attention_mask'])[0]
+        input_ids = inputs['input_ids'].squeeze(1)  # Remove extra dimension
+        attention_mask = inputs['attention_mask'].squeeze(1)  # Remove extra dimension
+
+        embedded = self.bert(input_ids, attention_mask=attention_mask)[0]
 
         # Project the embedded tensor to the desired shape
-        embedded = self.proj(embedded)
+        # embedded = self.proj(embedded)
 
         # Pass the embedding tensor through nn.Transformer
-        output = self.transformer(embedded)
+        output = self.transformer(embedded, embedded)
 
         # Transpose the output tensor back to the original shape
         output = output.permute(1, 0, 2)
 
         # Take the last output from the transformer and pass it through the linear layer
         output = self.fc(output[-1])
-        output = torch.sigmoid(output)
+        # output = torch.sigmoid(output)
 
         return output
 

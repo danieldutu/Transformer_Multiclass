@@ -3,6 +3,18 @@ from transformers import DistilBertTokenizer
 
 
 class TextLabelDataset(Dataset):
+    """
+    Dataset for text and labels
+
+    Args:
+        dataframe (pd.DataFrame): Dataframe containing the text and labels
+        max_length (int): Maximum length of the text
+
+    Returns:
+        torch.Tensor: Input ids
+        torch.Tensor: Attention mask
+        torch.Tensor: Labels
+    """
     def __init__(self, dataframe, max_length):
         self.dataframe = dataframe
         self.tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
