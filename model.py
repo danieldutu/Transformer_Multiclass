@@ -35,9 +35,6 @@ class TransformerModel(nn.Module):
 
         embedded = self.bert(input_ids, attention_mask=attention_mask)[0]
 
-        # Project the embedded tensor to the desired shape
-        # embedded = self.proj(embedded)
-
         # Pass the embedding tensor through nn.Transformer
         output = self.transformer(embedded, embedded)
 
@@ -46,7 +43,6 @@ class TransformerModel(nn.Module):
 
         # Take the last output from the transformer and pass it through the linear layer
         output = self.fc(output[-1])
-        # output = torch.sigmoid(output)
 
         return output
 
@@ -55,5 +51,3 @@ if __name__ == '__main__':
     num_labels = 5
     model = TransformerModel(num_labels, hidden_dim=768, num_layers=4, dropout=0.1)
     print(model)
-
-
